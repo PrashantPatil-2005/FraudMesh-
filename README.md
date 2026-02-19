@@ -4,6 +4,8 @@
 
 Built on 590,540 real-world transactions from the IEEE-CIS Fraud Detection dataset.
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://prashantpatil-2005-fraudmesh-rl.streamlit.app)
+
 ---
 
 ## What This System Does
@@ -22,6 +24,14 @@ Transaction → Graph Analysis → Fraud Score → Response Decision
                                               ├─ FLAG FOR REVIEW
                                               └─ FREEZE ACCOUNT
 ```
+
+---
+
+## 🚀 Live Demo
+
+**[Try the interactive Streamlit app →](https://prashantpatil-2005-fraudmesh-rl.streamlit.app)**
+
+Explore 500 real transactions through the full GNN → RL pipeline — no setup required.
 
 ---
 
@@ -63,11 +73,16 @@ Transaction → Graph Analysis → Fraud Score → Response Decision
 
 ```bash
 # 1. Clone and setup
-git clone https://github.com/YOUR_USERNAME/fraudmesh-rl.git
-cd fraudmesh-rl
+git clone https://github.com/PrashantPatil-2005/FraudMesh-.git
+cd FraudMesh-
 python -m venv venv
-source venv/bin/activate  # Mac/Linux
-# .\venv\Scripts\activate  # Windows
+
+# Windows
+.\venv\Scripts\activate
+
+# Mac/Linux
+# source venv/bin/activate
+
 pip install -r requirements.txt
 
 # 2. Download data
@@ -88,7 +103,46 @@ python generate_report.py
 
 # 6. Validate everything
 python validate_project.py
+
+# 7. Launch Streamlit app
+python -m app.precompute                       # Pre-compute demo data (run once)
+.\venv\Scripts\streamlit run streamlit_app.py  # Windows
+# streamlit run streamlit_app.py               # Mac/Linux
 ```
+
+---
+
+## Streamlit Web App
+
+The project includes an interactive Streamlit dashboard with 5 pages:
+
+| Page | Description |
+|------|-------------|
+| 🏠 **Home** | Project overview, key metrics, pipeline explanation |
+| 🔍 **Transaction Explorer** | Select any transaction → see GNN score, RL state vector, DQN decision with Q-values |
+| 📊 **Batch Analysis** | Fraud score distributions, action breakdowns, reward analysis across all 500 transactions |
+| 📈 **Model Comparison** | Phase 1 vs 2 vs 3 results side-by-side with saved plots |
+| 🏗️ **Architecture** | System design, why GNN, why RL, design decisions, limitations |
+
+### Running Locally
+
+```bash
+# Step 1: Pre-compute demo data (one time, ~5 min)
+python -m app.precompute
+
+# Step 2: Launch the app
+.\venv\Scripts\streamlit run streamlit_app.py   # Windows
+# streamlit run streamlit_app.py                # Mac/Linux
+
+# Opens at http://localhost:8501
+```
+
+### Deploying to Streamlit Cloud
+
+1. Push to GitHub (make sure `app/demo_data/` is included)
+2. Go to [share.streamlit.io](https://share.streamlit.io)
+3. Select your repo → Branch: `main` → Main file: `streamlit_app.py`
+4. Click **Deploy**
 
 ---
 
@@ -184,16 +238,24 @@ fraudmesh-rl/
 │   ├── rl_trainer.py              # RL training loop
 │   ├── rl_evaluate.py             # RL evaluation
 │   └── rl_baselines.py            # Random and rule-based policies
+├── app/
+│   ├── precompute.py              # Pre-compute demo data for Streamlit
+│   └── demo_data/                 # Pre-computed data (pushed to git)
 ├── outputs/
 │   ├── plots/                     # All visualizations
 │   └── metrics/                   # All metrics as JSON
 ├── models/                        # Saved model weights
+├── .streamlit/
+│   └── config.toml                # Streamlit theme config
+├── streamlit_app.py               # Streamlit web app (5 pages)
 ├── run_phase1.py                  # Phase 1 entry point
 ├── run_phase2.py                  # Phase 2 entry point
 ├── run_phase3.py                  # Phase 3 entry point
 ├── demo.py                        # Full system demonstration
 ├── generate_report.py             # Report generator
 ├── validate_project.py            # Project validator
+├── Procfile                       # Hosting config
+├── packages.txt                   # System dependencies
 ├── requirements.txt
 └── README.md
 ```
@@ -207,6 +269,7 @@ fraudmesh-rl/
 - **PyTorch Geometric** — graph neural networks
 - **Gymnasium** — RL environment interface
 - **scikit-learn** — baseline models
+- **Streamlit** — interactive web dashboard
 - **NetworkX** — graph construction and analysis
 - **pandas / numpy** — data processing
 - **matplotlib / seaborn** — visualization
@@ -223,6 +286,7 @@ fraudmesh-rl/
 | RL algorithm | DQN (not PPO) | Discrete action space, simpler to debug |
 | Graph type | Heterogeneous bipartite | Two node types require HeteroConv |
 | Reward design | Asymmetric costs | Missed fraud costs more than false positive |
+| Demo app | Pre-computed data only | Fast load on free hosting (<10s) |
 
 ---
 

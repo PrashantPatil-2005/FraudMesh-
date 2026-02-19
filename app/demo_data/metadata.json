@@ -1,0 +1,35 @@
+{
+  "num_transactions": 500,
+  "fraud_count": 125,
+  "legit_count": 375,
+  "fraud_score_source": "GNN (GAT)",
+  "rl_method": "DQN",
+  "total_reward": -1840.0,
+  "accuracy": 0.36,
+  "action_distribution": {
+    "APPROVE": 77,
+    "SOFT_BLOCK": 84,
+    "HARD_BLOCK": 339,
+    "FLAG_REVIEW": 0,
+    "FREEZE_ACCOUNT": 0
+  },
+  "reward_structure": {
+    "APPROVE_FRAUD": -50.0,
+    "SOFT_BLOCK_FRAUD": 5.0,
+    "HARD_BLOCK_FRAUD": 10.0,
+    "FLAG_REVIEW_FRAUD": 7.0,
+    "FREEZE_ACCOUNT_FRAUD": 8.0,
+    "APPROVE_LEGIT": 1.0,
+    "SOFT_BLOCK_LEGIT": -2.0,
+    "HARD_BLOCK_LEGIT": -10.0,
+    "FLAG_REVIEW_LEGIT": -3.0,
+    "FREEZE_ACCOUNT_LEGIT": -30.0
+  },
+  "actions": {
+    "0": "APPROVE",
+    "1": "SOFT_BLOCK",
+    "2": "HARD_BLOCK",
+    "3": "FLAG_REVIEW",
+    "4": "FREEZE_ACCOUNT"
+  }
+}

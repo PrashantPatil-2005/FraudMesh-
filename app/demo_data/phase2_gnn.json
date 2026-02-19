@@ -1,0 +1,24 @@
+{
+  "gnn_gat": {
+    "auc": 0.7945683965208209,
+    "f1": 0.26288798920377865,
+    "precision": 0.15639049454078355,
+    "recall": 0.8240270727580372,
+    "fpr": 0.4636427815037063,
+    "fnr": 0.17597292724196278,
+    "confusion_matrix": {
+      "tn": 3039,
+      "fp": 2627,
+      "fn": 104,
+      "tp": 487
+    }
+  },
+  "training_info": {
+    "best_epoch": 49,
+    "total_epochs": 64,
+    "total_parameters": 72290,
+    "best_train_auc": 0.7746012960632191,
+    "best_train_loss": 0.5877793431282043
+  },
+  "note": "GNN evaluation is node-level (per card). Phase 1 baselines are transaction-level. Not directly comparable but shows relative capability."
+}

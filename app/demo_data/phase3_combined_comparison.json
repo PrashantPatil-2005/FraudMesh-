@@ -1,0 +1,36 @@
+{
+  "phase3_rl_results": {
+    "dqn_agent": {
+      "avg_reward": 1084.12,
+      "std_reward": 61.37642544169544,
+      "min_reward": 905.0,
+      "max_reward": 1199.0,
+      "avg_fraud_catch_rate": 1.0,
+      "avg_false_positive_rate": 0.015003907251288235,
+      "num_episodes": 50
+    },
+    "baselines": {
+      "Random Policy": {
+        "avg_reward": -1238.86,
+        "std_reward": 204.3952064017158,
+        "avg_fraud_catch_rate": 0.8079085615015807,
+        "avg_false_positive_rate": 0.7990825378324102,
+        "num_episodes": 50
+      },
+      "Rule-Based Policy": {
+        "avg_reward": 865.72,
+        "std_reward": 53.50739761939465,
+        "avg_fraud_catch_rate": 1.0,
+        "avg_false_positive_rate": 0.16434027309959848,
+        "num_episodes": 50
+      }
+    },
+    "training_summary": {
+      "total_episodes": 500,
+      "best_avg_reward": 856.74,
+      "total_time_seconds": 1012.8152616024017,
+      "total_training_steps": 99001,
+      "final_epsilon": 0.08157186144027828
+    }
+  }
+}

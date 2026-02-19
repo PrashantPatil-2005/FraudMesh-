@@ -179,3 +179,7 @@ outputs/
 models/
 *.pt
 *.pth
+
+# Allow demo data for Streamlit deployment
+!app/demo_data/
+!app/demo_data/**

@@ -1,0 +1,30 @@
+{
+  "logistic_regression": {
+    "auc": 0.814087829531605,
+    "f1": 0.18729246487867177,
+    "precision": 0.10760933372468447,
+    "recall": 0.7217027559055118,
+    "false_positive_rate": 0.21327733155624146,
+    "false_negative_rate": 0.2782972440944882,
+    "confusion_matrix": {
+      "tn": 89721,
+      "fp": 24323,
+      "fn": 1131,
+      "tp": 2933
+    }
+  },
+  "random_forest": {
+    "auc": 0.8695324925702111,
+    "f1": 0.2697210593160544,
+    "precision": 0.16673451584763013,
+    "recall": 0.7054625984251969,
+    "false_positive_rate": 0.12563571954684158,
+    "false_negative_rate": 0.2945374015748031,
+    "confusion_matrix": {
+      "tn": 99716,
+      "fp": 14328,
+      "fn": 1197,
+      "tp": 2867
+    }
+  }
+}
