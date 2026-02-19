@@ -76,8 +76,8 @@ def engineer_features(df):
     # Identify columns to drop (>60% missing in training set)
     cols_to_drop = missing_pct[missing_pct > MISSING_THRESHOLD * 100].index.tolist()
     
-    # Also drop ID and time columns that won't be used as features
-    cols_to_drop.extend([TRANSACTION_ID_COL, TIME_COL])
+    # Also drop ID column (but KEEP Time column for graph construction)
+    cols_to_drop.append(TRANSACTION_ID_COL)
     
     # Remove duplicates
     cols_to_drop = list(set(cols_to_drop))
@@ -152,7 +152,8 @@ def engineer_features(df):
     exclude_cols = [
         TARGET_COL,           # This is the target
         MERCHANT_NODE_COL,    # For graph construction
-        CARD_COL              # For graph construction
+        CARD_COL,             # For graph construction
+        TIME_COL              # Exclude time from baseline features
     ]
     
     # Keep only columns present in dataframe

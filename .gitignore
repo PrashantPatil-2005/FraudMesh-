@@ -174,3 +174,8 @@ Desktop.ini
 data/
 outputs/
 *.csv
+
+# Phase 2
+models/
+*.pt
+*.pth
