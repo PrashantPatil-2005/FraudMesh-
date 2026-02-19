@@ -4,7 +4,7 @@
 
 Built on 590,540 real-world transactions from the IEEE-CIS Fraud Detection dataset.
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://prashantpatil-2005-fraudmesh-rl.streamlit.app)
+
 
 ---
 
@@ -26,12 +26,6 @@ Transaction → Graph Analysis → Fraud Score → Response Decision
 ```
 
 ---
-
-## 🚀 Live Demo
-
-**[Try the interactive Streamlit app →](https://prashantpatil-2005-fraudmesh-rl.streamlit.app)**
-
-Explore 500 real transactions through the full GNN → RL pipeline — no setup required.
 
 ---
 
@@ -83,7 +77,7 @@ python -m venv venv
 # Mac/Linux
 # source venv/bin/activate
 
-pip install -r requirements.txt
+pip install -r requirements_full.txt
 
 # 2. Download data
 # Go to https://www.kaggle.com/c/ieee-fraud-detection/data
