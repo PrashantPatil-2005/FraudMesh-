@@ -1,114 +1,252 @@
-# FraudMesh-RL — Phase 1
+# FraudMesh-RL
 
-Fraud detection system combining Graph Neural Networks and Reinforcement Learning.
+**End-to-end financial fraud detection and autonomous response system combining Graph Neural Networks and Reinforcement Learning.**
 
-## Phase 1: Data Exploration + Baseline Models
+Built on 590,540 real-world transactions from the IEEE-CIS Fraud Detection dataset.
 
-This phase establishes baselines using traditional ML methods before implementing GNN.
+---
 
-### Setup
+## What This System Does
 
-1. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+Most fraud detection systems answer: **"Is this fraud?"**
 
-2. **Download data:**
-   - Go to [Kaggle IEEE-CIS Fraud Detection](https://www.kaggle.com/c/ieee-fraud-detection/data)
-   - Download `train_transaction.csv` and `train_identity.csv`
-   - Place them in the `data/` folder
+This system answers: **"Is this fraud, AND what should we do about it?"**
 
-3. **Run Phase 1:**
-   ```bash
-   python run_phase1.py
-   ```
+```
+Transaction → Graph Analysis → Fraud Score → Response Decision
+                  (GNN)          (0-1)        (RL Agent)
 
-### What Phase 1 Does
+                                              ┌─ APPROVE
+                                              ├─ SOFT BLOCK (request 2FA)
+                                     0.87 ──→ ├─ HARD BLOCK (decline)
+                                              ├─ FLAG FOR REVIEW
+                                              └─ FREEZE ACCOUNT
+```
 
-1. **Data Loading**: Merges transaction and identity datasets
-2. **EDA**: Analyzes fraud patterns, missing values, features
-3. **Feature Engineering**: Time-based split, encoding, merchant node creation
-4. **Graph Construction**: Builds card-merchant bipartite graph
-5. **Baseline Training**: Logistic Regression + Random Forest
-6. **Evaluation**: Comprehensive metrics and visualizations
+---
 
-### Outputs
+## Architecture
 
-**Plots** (in `outputs/plots/`):
-- Class distribution
-- Missing values analysis
-- Transaction amount distributions
-- Fraud correlations
-- ROC curves
-- Confusion matrices
-- Feature importances
-- Fraud cluster subgraph
+```
+┌──────────────────────────────────────────────────────────┐
+│                    RAW TRANSACTION                        │
+└────────────────────────┬─────────────────────────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────┐
+│              LAYER 1: GRAPH CONSTRUCTION                  │
+│  • Cards and merchants as nodes                           │
+│  • Transactions as edges                                  │
+│  • Bipartite heterogeneous graph                          │
+└────────────────────────┬─────────────────────────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────┐
+│              LAYER 2: GNN FRAUD SCORING (GAT)             │
+│  • Multi-head attention on neighbor nodes                 │
+│  • Fraud signal propagates through graph                  │
+│  • Output: fraud probability per card                     │
+└────────────────────────┬─────────────────────────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────┐
+│              LAYER 3: RL RESPONSE AGENT (DQN)             │
+│  • State: [fraud_score, amount, time, velocity, ...]      │
+│  • 5 actions with different business costs                │
+│  • Learned to balance fraud prevention vs customer UX     │
+└──────────────────────────────────────────────────────────┘
+```
 
-**Metrics** (in `outputs/metrics/`):
-- `phase1_baselines.json`: Complete baseline performance
+---
 
-### Key Design Decisions
+## Quick Start
 
-- **Merchant Node**: Created from `addr1 + ProductCD` (no direct merchant ID in dataset)
-- **Train/Test Split**: Time-based (80/20) to prevent data leakage
-- **Class Imbalance**: Handled with `class_weight='balanced'`
+```bash
+# 1. Clone and setup
+git clone https://github.com/YOUR_USERNAME/fraudmesh-rl.git
+cd fraudmesh-rl
+python -m venv venv
+source venv/bin/activate  # Mac/Linux
+# .\venv\Scripts\activate  # Windows
+pip install -r requirements.txt
 
-### Next: Phase 2
+# 2. Download data
+# Go to https://www.kaggle.com/c/ieee-fraud-detection/data
+# Download train_transaction.csv and train_identity.csv
+# Place in data/ folder
 
-Phase 2 will implement Graph Neural Network to beat these baselines.
+# 3. Run all phases
+python run_phase1.py     # Baselines (~15 min)
+python run_phase2.py     # GNN (~20 min)
+python run_phase3.py     # RL (~30 min)
 
-### Project Structure
+# 4. Demo
+python demo.py
+
+# 5. Generate report
+python generate_report.py
+
+# 6. Validate everything
+python validate_project.py
+```
+
+---
+
+## Results
+
+### Phase 1: Baseline Detection
+
+| Model | AUC-ROC | F1 | Precision | Recall |
+|-------|---------|-----|-----------|--------|
+| Logistic Regression | — | — | — | — |
+| Random Forest | — | — | — | — |
+
+*Run `python run_phase1.py` to populate these numbers.*
+
+### Phase 2: GNN Detection
+
+| Model | AUC-ROC | F1 | Precision | Recall |
+|-------|---------|-----|-----------|--------|
+| GAT (2-layer) | — | — | — | — |
+
+*Run `python run_phase2.py` to populate these numbers.*
+
+### Phase 3: RL Response Agent
+
+| Policy | Avg Reward | Fraud Catch Rate | False Positive Rate |
+|--------|-----------|-----------------|-------------------|
+| DQN Agent | — | — | — |
+| Rule-Based | — | — | — |
+| Random | — | — | — |
+
+*Run `python run_phase3.py` to populate these numbers.*
+
+---
+
+## Why GNN Over Traditional ML
+
+A traditional model sees each transaction in isolation:
+
+> Card #1234 spent $50 at Store X at 3am → **Low risk** (new card, small amount)
+
+The GNN sees the graph neighborhood:
+
+> Store X is connected to 47 cards, 12 of which were confirmed fraud this week.
+> Card #1234 is the 13th card at this merchant.
+> → **High risk** (fraud cluster detected)
+
+The fraud signal travels through the graph structure.
+
+---
+
+## Why RL Over Binary Classification
+
+Binary classifiers output: **fraud** or **not fraud**.
+
+But the cost of each mistake is different:
+
+| Scenario | Cost |
+|----------|------|
+| Approve real fraud | $50 loss |
+| Block legitimate customer | $10 lost revenue + trust damage |
+| Freeze innocent account | $30 customer service + churn risk |
+| Flag for review (fraud) | $7 analyst cost but fraud caught |
+| Soft block (legit) | $2 minor 2FA friction |
+
+The RL agent learned these cost tradeoffs and picks the action
+that minimizes total business cost.
+
+---
+
+## Project Structure
 
 ```
 fraudmesh-rl/
-├── data/                  # CSV files (not in git)
-├── src/                   # Source code
-│   ├── config.py
-│   ├── data_loader.py
-│   ├── eda.py
-│   ├── feature_engineer.py
-│   ├── graph_builder.py
-│   ├── baseline_model.py
-│   └── evaluate.py
-├── outputs/              # Results (not in git)
-│   ├── plots/
-│   └── metrics/
-├── run_phase1.py         # Main entry point
-└── requirements.txt
+├── data/                          # IEEE-CIS dataset (not in git)
+│   ├── train_transaction.csv
+│   └── train_identity.csv
+├── src/
+│   ├── config.py                  # All constants and paths
+│   ├── data_loader.py             # Load and merge CSVs
+│   ├── eda.py                     # Exploratory data analysis
+│   ├── feature_engineer.py        # Cleaning, encoding, splitting
+│   ├── graph_builder.py           # NetworkX graph construction
+│   ├── baseline_model.py          # Logistic Regression + Random Forest
+│   ├── evaluate.py                # Phase 1 evaluation
+│   ├── pyg_converter.py           # NetworkX → PyTorch Geometric
+│   ├── gnn_model.py               # GAT model definition
+│   ├── gnn_trainer.py             # GNN training loop
+│   ├── gnn_evaluate.py            # GNN evaluation
+│   ├── rl_environment.py          # Custom Gymnasium environment
+│   ├── replay_buffer.py           # Experience replay
+│   ├── dqn_model.py               # Q-Network architecture
+│   ├── dqn_agent.py               # DQN agent
+│   ├── rl_trainer.py              # RL training loop
+│   ├── rl_evaluate.py             # RL evaluation
+│   └── rl_baselines.py            # Random and rule-based policies
+├── outputs/
+│   ├── plots/                     # All visualizations
+│   └── metrics/                   # All metrics as JSON
+├── models/                        # Saved model weights
+├── run_phase1.py                  # Phase 1 entry point
+├── run_phase2.py                  # Phase 2 entry point
+├── run_phase3.py                  # Phase 3 entry point
+├── demo.py                        # Full system demonstration
+├── generate_report.py             # Report generator
+├── validate_project.py            # Project validator
+├── requirements.txt
+└── README.md
 ```
 
-## Phase 2: Graph Neural Network
+---
 
-Implements a Graph Attention Network (GAT) to beat Phase 1 baselines.
+## Technical Stack
 
-### How It Works
+- **Python 3.10+**
+- **PyTorch** — neural network framework
+- **PyTorch Geometric** — graph neural networks
+- **Gymnasium** — RL environment interface
+- **scikit-learn** — baseline models
+- **NetworkX** — graph construction and analysis
+- **pandas / numpy** — data processing
+- **matplotlib / seaborn** — visualization
 
-1. **Graph Conversion**: NetworkX graph → PyTorch Geometric HeteroData
-2. **Node Features**: Aggregated transaction statistics per card/merchant
-3. **Model**: 2-layer GAT with multi-head attention
-4. **Training**: Weighted cross-entropy, early stopping, LR scheduling
+---
 
-### Run Phase 2
+## Key Design Decisions
 
-```bash
-# Install PyTorch Geometric first
-pip install torch torch-geometric
-pip install torch-scatter torch-sparse torch-cluster -f https://data.pyg.org/whl/torch-2.1.2+cpu.html
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Merchant node | `addr1 + ProductCD` | No direct merchant ID in dataset |
+| Train/test split | Time-based (80/20) | Prevents temporal data leakage |
+| GNN type | GAT (not GCN) | Attention weights are interpretable |
+| RL algorithm | DQN (not PPO) | Discrete action space, simpler to debug |
+| Graph type | Heterogeneous bipartite | Two node types require HeteroConv |
+| Reward design | Asymmetric costs | Missed fraud costs more than false positive |
 
-# Run
-python run_phase2.py
-```
+---
 
-### Why GAT Over GCN
-- Attention mechanism learns WHICH neighbors matter more
-- A merchant connected to many fraud cards gets higher attention weight
-- More interpretable than GCN
+## Limitations
 
-### Phase 2 Outputs
-- `outputs/plots/gnn_training_curves.png` — Loss, AUC, F1 over epochs
-- `outputs/plots/gnn_confusion_matrix.png` — Final confusion matrix
-- `outputs/plots/gnn_roc_curve.png` — ROC curve
-- `outputs/plots/model_comparison_auc.png` — LR vs RF vs GNN
-- `outputs/metrics/phase2_gnn.json` — GNN metrics
-- `outputs/metrics/full_comparison.json` — All models compared
-- `models/best_gnn_model.pt` — Saved model weights
+- **Merchant node is a proxy** — real systems have actual merchant IDs
+- **Reward function is hand-designed** — real costs come from business data
+- **Static dataset** — real deployment would be online/streaming
+- **GNN evaluates cards, baselines evaluate transactions** — comparison is directional
+- **Environment is simulated** — real RL would learn from live feedback
+
+---
+
+## Dataset
+
+[IEEE-CIS Fraud Detection](https://www.kaggle.com/c/ieee-fraud-detection)
+
+- 590,540 transactions
+- 394 features (transaction) + 41 features (identity)
+- ~3.5% fraud rate
+- Real-world e-commerce transactions
+
+---
+
+## License
+
+MIT

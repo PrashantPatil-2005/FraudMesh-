@@ -79,3 +79,57 @@ GNN_CHECKPOINT_PATH = MODELS_DIR / 'best_gnn_model.pt'
 
 # Logging
 LOG_EVERY_N_EPOCHS = 5       # Print metrics every N epochs
+
+# ============================================================================
+# PHASE 3 — RL CONFIGURATION
+# ============================================================================
+
+# Action Space
+RL_ACTIONS = {
+    0: 'APPROVE',
+    1: 'SOFT_BLOCK',
+    2: 'HARD_BLOCK',
+    3: 'FLAG_REVIEW',
+    4: 'FREEZE_ACCOUNT'
+}
+RL_NUM_ACTIONS = 5
+
+# Reward Structure
+RL_REWARDS = {
+    'APPROVE_FRAUD':        -50.0,
+    'SOFT_BLOCK_FRAUD':     +5.0,
+    'HARD_BLOCK_FRAUD':     +10.0,
+    'FLAG_REVIEW_FRAUD':    +7.0,
+    'FREEZE_ACCOUNT_FRAUD': +8.0,
+    'APPROVE_LEGIT':        +1.0,
+    'SOFT_BLOCK_LEGIT':     -2.0,
+    'HARD_BLOCK_LEGIT':     -10.0,
+    'FLAG_REVIEW_LEGIT':    -3.0,
+    'FREEZE_ACCOUNT_LEGIT': -30.0,
+}
+
+# State Space
+RL_STATE_DIM = 8
+
+# DQN Hyperparameters
+DQN_HIDDEN_DIM = 128
+DQN_LEARNING_RATE = 0.001
+DQN_GAMMA = 0.99
+DQN_TAU = 0.005
+DQN_BATCH_SIZE = 64
+DQN_BUFFER_SIZE = 50000
+DQN_MIN_BUFFER_SIZE = 1000
+
+# Epsilon-Greedy Exploration
+EPSILON_START = 1.0
+EPSILON_END = 0.01
+EPSILON_DECAY = 0.995
+
+# Training
+RL_NUM_EPISODES = 500
+RL_MAX_STEPS_PER_EPISODE = 200
+RL_LOG_EVERY = 25
+RL_EVAL_EVERY = 50
+
+# Model save
+RL_CHECKPOINT_PATH = MODELS_DIR / 'best_dqn_model.pt'
